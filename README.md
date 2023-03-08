@@ -3,7 +3,8 @@ This is an social media which is people share their secrets anonymously or read 
 </br>
 <h3> Register page </h3>
 This is register page which you register with your email or google account
-![register2](https://user-images.githubusercontent.com/75533278/223878166-f9433f5a-4346-409b-82b0-c508175ccdc7.png)
+<img>
+![register2](https://user-images.githubusercontent.com/75533278/223878166-f9433f5a-4346-409b-82b0-c508175ccdc7.png) </img>
 
 
 </br>
