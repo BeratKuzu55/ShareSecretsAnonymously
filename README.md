@@ -12,7 +12,7 @@ This is register page which you register with your email or google account
 </br>
 This is secrets page which you see all the posts that you and anothers useres shared
 ![secrs2](https://user-images.githubusercontent.com/75533278/223878864-67962f7b-5285-4e78-993e-212d6936b42e.PNG)
-
+<img src="https://user-images.githubusercontent.com/75533278/223878864-67962f7b-5285-4e78-993e-212d6936b42e.PNG">
 
 </br>
 <h3> Submit page </h3>
