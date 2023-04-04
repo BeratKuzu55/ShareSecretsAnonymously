@@ -14,9 +14,11 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const app = express();
 
-let secrets_arr = [];
 
+let secrets_arr = [];
+let secretObjectsArr = [];
 //console.log(process.env.SECRET);
+
 
 const options = {
     host : "localhost" , 
@@ -99,6 +101,10 @@ passport.use(new GoogleStrategy ({
 
 */
 
+
+
+
+
 app.get("/" , function(req , res){
     res.render("home");
 })
@@ -112,19 +118,52 @@ app.get("/auth/google/secrets" , passport.authenticate('google' , {failureRedire
 })
 
 
-
+let commentsArr = {};
+let commentsArr2 = {};
 app.get("/secrets" , function(req , res) {
     if(req.isAuthenticated){
         con.query(`select * from secrets` , function(err , results){
            for(var i = 0; i<results.length; i++){
                 secrets_arr[i] = results[i].content;
-                //console.log(secrets_arr[i]);
+                secretObjectsArr[i] = results[i].id;
            }
         })
         
-        res.render("secrets" , {postarrejs: secrets_arr});
+        con.query(`select * from comments` , function(err , results){
+            
+            commentsArr2 = results;
+            console.log(commentsArr2);
+            results.forEach(function(gelen){
+                //console.log("content " + gelen.content +" id" + gelen.id);
+                
+                var i = 0;
+                commentsArr[i] = { id : gelen.id  , content : gelen.content , secret_id : gelen.secretid , commentEmail : gelen.email}
+                
+               // console.log("comARR İD " + commentsArr[i].id + "commArr" + commentsArr[i].content + " secretid " + commentsArr[i].secret_id + "commentEmail " + commentsArr[i].commentEmail);
+                i++
+            })
+        })
+        res.render("secrets" , {postarrejs: secrets_arr , postSecretObjects: secretObjectsArr , comments : commentsArr2});
     }else {
         res.redirect("/login");
+    }
+})
+
+
+app.post("/sendcomment" , function(req , res){
+    if(req.isAuthenticated){
+        let comment = req.body.comment;
+       // console.log(comment);
+        let secret = req.body.secretWhichHaveANewComment;
+        //console.log(secret);
+        let secretid = req.body.secretid;
+        //console.log(secretid);
+        
+        con.query(`insert into comments (content , email , secretid) values ('${comment}' , '${req.session.user_email}' , ${secretid})`);
+
+        res.redirect("/secrets");
+
+
     }
 })
 
@@ -203,36 +242,36 @@ con.query(`select * from users` , function(err , result){
 
 })
 
+
 app.post("/login" , function(req , res){
 
-     // bcrypt ile 
-    let username = req.body.username;
-    //let password = md5(req.body.password);
+    // bcrypt ile 
+   let username = req.body.username;
+   //let password = md5(req.body.password);
 
-    let password = req.body.password;
-  
-    con.query(`SELECT * FROM users` , function(err , rows){
-        if(err) throw err;
-        for (let index = 0; index < rows.length; index++) {
-            console.log(rows[index].email);
-             if(rows[index].email === username ){
-                bcrypt.compare(password , rows[index].password , function(err, result){
-                    if(err) throw err;
-                    if(result){
-                        req.session.user_email = username;
-                        res.render("secrets" , {postarrejs: secrets_arr}); 
-                    }
-                })
-               
-             }
-            
-        }
-     
-    })    
+   let password = req.body.password;
+ 
+   con.query(`SELECT * FROM users` , function(err , rows){
+       if(err) throw err;
+       for (let index = 0; index < rows.length; index++) {
+           console.log(rows[index].email);
+            if(rows[index].email === username ){
+               bcrypt.compare(password , rows[index].password , function(err, result){
+                   if(err) throw err;
+                   if(result){
+                       req.session.user_email = username;
+                       res.render("secrets" , {postarrejs: secrets_arr , postSecretObjects: secretObjectsArr , comments : commentsArr}); 
+                   }
+               })
+              
+            }
+           
+       }
+       
+   })    
 
 
 })
-
 
 app.get('/logout' , function(req , res){
     req.session.destroy(function(err){
