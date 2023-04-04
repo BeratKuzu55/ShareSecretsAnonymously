@@ -22,3 +22,5 @@ This is secrets page which you see all the posts that you and anothers useres sh
 download
 1) There is not node modules directory here but there are needed packages in package.json
 2) SECRET and CLIENT_ID variables is you have to create with your information 
+
+<img src="https://user-images.githubusercontent.com/75533278/229800264-cf2a66f4-b8c5-4675-87ae-781ea430d077.PNG">
